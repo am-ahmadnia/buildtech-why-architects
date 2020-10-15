@@ -1,0 +1,238 @@
+// breakpoints
+$breakpoint-tablet: 768px;
+$breakpoint-mobile-l: 425px;
+
+$light-red: rgba(red, 0.3);
+$light-green: rgba(green, 0.3);
+$color-primary: #6f42c1;
+
+::-moz-selection {
+  background: $color-primary;
+  color: #fff;
+}
+::selection {
+  background: $color-primary;
+  color: #fff;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+*,
+*::before,
+*::after {
+  font-size: 18px;
+}
+.table-rtl {
+  direction: rtl;
+  text-align: right;
+}
+.text-right {
+  text-align: right;
+}
+.c-mr-10 {
+  margin-right: 10px;
+}
+.c-mt-20 {
+  margin-top: 20px;
+}
+.card-table-one {
+  .c-card-header {
+    width: 100%;
+    display: block;
+    margin-bottom: 25px;
+    .card-title {
+      float: right;
+      margin-top: 5px;
+      font-size: 22px;
+    }
+    .c-btn_add-project {
+      float: left;
+    }
+  }
+}
+/////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
+.az-dashboard-one-title {
+  direction: rtl;
+  text-align: right;
+  h2.az-dashboard-title {
+    letter-spacing: 0.5px;
+  }
+}
+.btn {
+  letter-spacing: 0.5px;
+}
+.az-content-header-right .btn:first-of-type {
+  margin-left: 0;
+}
+
+// head section
+.head-section {
+  width: 100%;
+  display: block;
+  margin-bottom: 25px;
+  .head-text {
+    .head-title {
+      float: right;
+      margin-top: 5px;
+      font-weight: 700;
+      font-size: 30px;
+    }
+    .head-text {
+      float: right;
+      margin-top: 5px;
+      font-size: 22px;
+    }
+  }
+}
+
+// form
+.c-form {
+  direction: rtl;
+  text-align: right;
+  .c-label {
+    color: rgba(#031b4e, 0.7);
+  }
+  .card-title {
+    font-size: 24px;
+  }
+}
+.error {
+  font-size: 15px;
+  color: rgba(red, 0.7);
+}
+
+// Info Card
+.info-card {
+  direction: rtl;
+  text-align: right;
+  padding: 25px 40px;
+  @media (max-width: $breakpoint-tablet) {
+    padding: 15px;
+  }
+  hr {
+    width: 100%;
+    margin: 30px 0;
+    @media (max-width: $breakpoint-tablet) {
+      margin-bottom: 10px;
+    }
+  }
+  td {
+    border: none;
+    padding: 20px 10px;
+    @media (max-width: $breakpoint-mobile-l) {
+      padding: 10px 5px;
+      font-size: 14px;
+    }
+  }
+  .fieldName {
+    margin-top: 10px;
+    width: 40%;
+  }
+  .pb-sm-0 {
+    @media (max-width: $breakpoint-tablet) {
+      padding-bottom: 0;
+    }
+  }
+  .c-card-header {
+    width: 100%;
+    display: block;
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 18px;
+      margin-top: 15px;
+    }
+    a {
+      margin-right: 10px;
+    }
+    .card-title {
+      float: right;
+      font-size: 22px;
+      margin: 5px 0px;
+      @media (max-width: $breakpoint-mobile-l) {
+        font-size: 18px;
+      }
+    }
+    .c-btn_add-project {
+      float: left;
+      @media (max-width: $breakpoint-tablet) {
+        font-size: 14px;
+        padding: 4px 10px;
+        padding-top: 7px;
+      }
+    }
+  }
+}
+// Modal
+.modal-title {
+  font-weight: 700;
+  font-size: 22px;
+}
+.modal-btn {
+  float: left;
+  background-color: $color-primary;
+}
+.modal-btn-outline {
+  color: $color-primary;
+  background-color: #fff;
+  border: 2px solid $color-primary;
+}
+.modal-btn-close {
+  border: none;
+  background-color: #fff;
+}
+.modal-btn-cancel {
+  border: 2px solid $light-green;
+  background-color: $light-green;
+}
+// value label
+.value-label {
+  color: $color-primary;
+}
+// datepicker
+.daysOfWeek {
+  direction: rtl;
+}
+// errors
+.red-text {
+  color: rgba(red, 0.6);
+}
+// responsive rows
+
+// task-table
+.task-table {
+  tr:last-child,
+  tr:first-child {
+    td {
+      border-top: none;
+    }
+  }
+  input,
+  .red-text {
+    display: block;
+    width: 100%;
+  }
+  input,
+  button {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+  }
+  input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cdd4e0;
+  }
+}

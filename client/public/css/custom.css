@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'irsans';
+  src: url('../fonts/iran-sans.ttf');
+}
+@font-face {
+  font-family: 'irsans-bold';
+  src: url('../fonts/iran-sans-bold.ttf');
+}
+@font-face {
+  font-family: farhang !important;
+  src: url('../fonts//woff/Farhang-Medium.woff');
+}
+
+* {
+  font-family: irsans, Roboto;
+}
