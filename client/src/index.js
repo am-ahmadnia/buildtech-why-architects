@@ -5,6 +5,4 @@ import { createBrowserHistory } from 'history';
 
 import App from './App';
 
-const history = createBrowserHistory();
-
 ReactDOM.render(<App />, document.getElementById('root'));
