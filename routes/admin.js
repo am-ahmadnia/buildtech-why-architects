@@ -5,6 +5,7 @@ const User = require('./../models/User');
 const Task = require('./../models/Task');
 const checkEntries = require('./../validation/errorsHandlers/errorHandlers');
 const checkEmpty = require('./../validation/errorsHandlers/checkEmpty');
+const isEmpty = require('is-empty');
 
 const {
   usernameExists,
@@ -14,7 +15,6 @@ const {
   personalCodeExists,
   password2NotMatch,
 } = require('./../validation/errorMessages');
-const isEmpty = require('is-empty');
 
 // User Related Routes
 router.post('/add-user', async (req, res) => {

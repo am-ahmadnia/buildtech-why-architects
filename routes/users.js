@@ -5,14 +5,18 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const checkEmpty = require('../validation/errorsHandlers/checkEmpty');
 const User = require('../models/User');
-const { userNotFound } = require('./../validation/errorMessages').user;
+const {
+  userNotFound,
+  passwordsNotEqual,
+} = require('./../validation/errorMessages').user;
+const checkEntries = require('./../validation/handlers/user');
 
 const {
   idNotFound,
   passwordIncorrect,
 } = require('../validation/errorMessages');
 
-const enterData = {
+const noDataErr = {
   m: 'enter data',
 };
 
@@ -52,17 +56,45 @@ router.post('/add-user', async (req, res) => {
         await user.save();
         res.status(201).json({});
       } catch (e) {
-        // change here
-        sendEmptyResponse(res, 400);
+        res.status(400).json({});
       }
     });
   });
 });
 
-router.post('/:username/change-password', async (req, res) => {
-  const { newPassword, newPassword2 } = req.body;
-  
-});
+router.post(
+  '/:username/change-password',
+  (req, res) => {
+    if (req.header('passwordCorrect') !== true) return res.status(400).json({});
+  },
+  async (req, res) => {
+    const { newPassword, newPassword2 } = req.body;
+    if (newPassword === undefined || newPassword2 === undefined)
+      return res.status(400).json(noDataErr);
+    const { errors, isValid } = checkEntries(req.body);
+    if (!isValid) return res.status(400).json(errors);
+    if (newPassword !== newPassword2)
+      return res.status(400).json({ passwordsNotEqual });
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(newPassword, salt, async (err, hash) => {
+        if (err) throw err;
+        try {
+          await User.findOneAndUpdate(
+            { username: req.params.id },
+            {
+              $set: {
+                password: hash,
+              },
+            }
+          );
+          res.status(200).json({});
+        } catch (e) {
+          res.status(400).json({});
+        }
+      });
+    });
+  }
+);
 
 router.post('/:username/check-password', async (req, res) => {
   const { password } = req.body;
@@ -81,36 +113,37 @@ router.post('/:username/check-password', async (req, res) => {
 
 router.post('/check-id', async (req, res) => {
   const { id } = req.body;
-  if (id === undefined) sendNoDataResponse(res);
+  if (id === undefined) return res.status(400).json(noDataErr);
   if (validator.isEmail(id)) {
     const email = id;
     try {
       const user = await User.findOne({ email });
-      if (!user) sendResponse(res, 400, null, { userNotFound });
-      sendResponse(res, 200);
+      if (!user) res.status(400).json({ userNotFound });
+      return res.status(200).json({});
     } catch (e) {
-      sendEmptyResponse(res);
+      return res.status(400).json({});
     }
   } else if (validator.isMobilePhone(id)) {
     const phoneNumber = id;
     try {
       const user = await User.findOne({ phoneNumber });
-      if (!user) sendResponse(res, 400, null, { userNotFound });
-      sendResponse(res, 200);
+      if (!user) res.status(400).json({ userNotFound });
+      return res.status(200).json({});
     } catch (e) {
-      sendEmptyResponse(res);
+      return res.status(400).json({});
     }
   } else {
     const username = id;
     try {
       const user = await User.findOne({ username });
-      if (!user) sendResponse(res, 400, null, { userNotFound });
-      sendResponse(res, 200);
+      if (!user) return res.status(400).json({ userNotFound });
+      return res.status(200).json({});
     } catch (e) {
-      sendEmptyResponse(res);
+      return res.status(400).json({});
     }
   }
 });
+
 router.post('/login', async (req, res) => {
   const { id, password } = req.body;
   if (id === undefined || password === undefined)
@@ -190,7 +223,7 @@ router.post('/login', async (req, res) => {
 });
 
 const sendNoDataResponse = (res) => {
-  return res.status(400).json(enterData);
+  return res.status(400).json(noDataErr);
 };
 const sendResponse = (res, status, data = {}, errors = {}) => {
   if (status === 200) {

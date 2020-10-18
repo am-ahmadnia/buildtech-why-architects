@@ -1,5 +1,14 @@
 const user = {
   userNotFound: 'کاربر با اطلاعات وارد شده یافت نشد',
+  newPasswordEmpty: 'رمز عبور جدید را وارد کنید',
+  newPassword2Empty: 'رمز عبور جدید را تکرار کنید',
+  passwordsNotEqual: 'رمز عبور همخوانی ندارد',
+  passwordEmpty: 'رمز عبور را وارد کنید',
+  passwordInvalid:
+    'رمز عبور بین 8 تا 22 کاراکتر و حداقل کاراکتر شامل یک حرف و یک کاراکتر خاص باشد',
+  passwordIncorrect: 'رمز عبور صحیح نمی باشد',
+  password2Empty: 'رمز عبور را تکرار کنید',
+  password2NotMatch: 'رمز عبور همخوانی ندارد',
 };
 const admin = {};
 const designer = {};
@@ -50,12 +59,7 @@ module.exports = {
 // phoneNumberEmpty: 'شماره همراه را وارد کنید',
 // phoneNumberInvalid: 'شماره همراه به درستی وارد کنید ',
 // phoneNumberExists: 'شماره همراه قبلا ثبت شده است',
-// passwordEmpty: 'رمز عبور را وارد کنید',
-// passwordInvalid:
-// 'رمز عبور بین 8 تا 22 کاراکتر و حداقل کاراکتر شامل یک حرف و یک کاراکتر خاص باشد',
-// passwordIncorrect: 'رمز عبور صحیح نمی باشد',
-// password2Empty: 'رمز عبور را تکرار کنید',
-// password2NotMatch: 'رمز عبور همخوانی ندارد',
+
 // adminVerificationKeyEmpty: 'کد تاییدیه ادمین را وارد کنید',
 // adminVerificationKeyInvalid: 'کد تاییدیه ادمین مطابقت ندارد',
 // startDateEmpty: 'تاریخ شروع را انتخاب کنید',
