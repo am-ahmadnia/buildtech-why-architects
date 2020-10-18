@@ -295,6 +295,7 @@ router.post('/users/add', async (req, res) => {
     req.body.personalCode === undefined
   )
     return res.status(400).json({ m: 'enter data' });
+
   const { errors } = checkEntries(req.body);
   const {
     firstName,

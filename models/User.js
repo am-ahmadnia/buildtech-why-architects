@@ -5,7 +5,7 @@ const schema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['admin', 'user'],
+      enum: ['admin', 'designer', 'leadDesigner', 'manager', 'client'],
     },
     firstName: {
       type: String,
@@ -26,9 +26,19 @@ const schema = new mongoose.Schema(
       trim: true,
     },
     phoneNumber: {
+      type: Number,
+      unique: true,
+      required: true,
+    },
+    email: {
       type: String,
       unique: true,
       trim: true,
+      required: true,
+    },
+    nationalCode: {
+      type: Number,
+      unique: true,
       required: true,
     },
     password: {

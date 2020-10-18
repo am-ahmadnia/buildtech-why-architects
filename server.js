@@ -8,9 +8,9 @@ const upload = require('express-fileupload');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const passport = require('passport');
-const main = require('./routes/main');
-const admin = require('./routes/admin');
 const users = require('./routes/users');
+const admin = require('./routes/admin');
+// const users = require('./routes/users');
 const verifyToken = require('./validation/verifyToken');
 
 app.use(cors());
@@ -30,9 +30,9 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 app.use(upload());
 
-app.use('/api/', main);
+// app.use('/api/', main);
 app.use('/api/admin', admin);
-app.use('/api/users', users);
+app.use('/api/user', users);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

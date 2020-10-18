@@ -1,141 +1,212 @@
 const express = require('express');
-const checkEntries = require('../validation/errorsHandlers/errorHandlers');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const validator = require('validator');
-const User = require('./../models/User');
-const Task = require('./../models/Task');
+const checkEmpty = require('../validation/errorsHandlers/checkEmpty');
+const User = require('../models/User');
+const { userNotFound } = require('./../validation/errorMessages').user;
 
 const {
-  currentPasswordEmpty,
-  newPasswordEmpty,
-  newPassword2Empty,
-  userNotFound,
-  currentPasswordIncorrect,
-  password2NotMatch,
-} = require('./../validation/errorMessages');
+  idNotFound,
+  passwordIncorrect,
+} = require('../validation/errorMessages');
 
-// uUser Realated Routes
-router.post('/users/:id/edit-profile', async (req, res) => {
-  // const { errors, isValid } = checkEntries(req.body);
-  const user = await User.findById(req.params.id);
-  for (const key in req.body) {
-    user[key] = req.body[key];
-  }
+const enterData = {
+  m: 'enter data',
+};
+
+router.get('/fetch-all', async (req, res) => {
   try {
-    await user.save();
-    res.status(200).json({});
-  } catch (e) {
-    res.status(400).json({});
-  }
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (e) {}
 });
 
-router.get('/users/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    for (const key in user) {
-      if (key === 'updatedAt' || key === 'createdAt' || key === 'password')
-        delete user[key];
-    }
-    res.status(200).json(user);
-  } catch (e) {
-    res.status(400).json();
-  }
-});
-
-// Task Related Routs
-router.get('/tasks', async (req, res) => {
-  try {
-    const tasks = await Task.find({});
-    res.status(200).json(tasks);
-  } catch (e) {
-    res.status(200).json({});
-  }
-});
-
-router.get('/tasks/:id', async (req, res) => {
-  try {
-    const task = await Task.findOne({});
-    res.status(200).json(task);
-  } catch (e) {
-    res.status(200).json({});
-  }
-});
-
-router.post('/:username/:taskId/update-task', async (req, res) => {
-  if (
-    req.body.todaysProgress === undefined ||
-    req.body.hoursSpent === undefined
-  )
-    return res.status(400).json({ m: 'enter data' });
-  const { errors, isValid } = checkEntries(req.body);
-  if (!isValid) return res.status(400).json(errors);
-
-  const { todaysProgress, hoursSpent } = req.body;
-
-  try {
-    // change here
-    const userId = await (await User.findOne({ username: req.params.username }))
-      ._id;
-    const updatedTask = await Task.findByIdAndUpdate(req.params.taskId, {
-      $set: {
-        todaysProgress,
-        hoursSpent,
-        updatedBy: userId,
-      },
+router.post('/add-user', async (req, res) => {
+  const {
+    role,
+    firstName,
+    lastName,
+    username,
+    phoneNumber,
+    nationalCode,
+    email,
+    password,
+  } = req.body;
+  const user = new User({
+    role,
+    firstName,
+    lastName,
+    username,
+    phoneNumber: +phoneNumber,
+    nationalCode: +nationalCode,
+    email,
+    password,
+  });
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(user.password, salt, async (err, hash) => {
+      if (err) throw err;
+      user.password = hash;
+      try {
+        await user.save();
+        res.status(201).json({});
+      } catch (e) {
+        // change here
+        sendEmptyResponse(res, 400);
+      }
     });
-    res.status(200).json({ updatedTask });
+  });
+});
+
+router.post('/:username/change-password', async (req, res) => {
+  const { newPassword, newPassword2 } = req.body;
+  
+});
+
+router.post('/:username/check-password', async (req, res) => {
+  const { password } = req.body;
+  if (password === undefined) sendNoDataResponse(res);
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) sendNoDataResponse(res);
+    bcrypt.compare(password, user.password).then((isMatch) => {
+      if (isMatch) sendEmptyResponse(res, 200);
+      else sendEmptyResponse(res, 400);
+    });
   } catch (e) {
-    res.status(400).json({});
+    sendEmptyResponse(res, 400);
   }
 });
 
-router.post('/:id/change-password', async (req, res) => {
-  const _errors = {};
-  for (const key in req.body) {
-    console.log(key);
+router.post('/check-id', async (req, res) => {
+  const { id } = req.body;
+  if (id === undefined) sendNoDataResponse(res);
+  if (validator.isEmail(id)) {
+    const email = id;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) sendResponse(res, 400, null, { userNotFound });
+      sendResponse(res, 200);
+    } catch (e) {
+      sendEmptyResponse(res);
+    }
+  } else if (validator.isMobilePhone(id)) {
+    const phoneNumber = id;
+    try {
+      const user = await User.findOne({ phoneNumber });
+      if (!user) sendResponse(res, 400, null, { userNotFound });
+      sendResponse(res, 200);
+    } catch (e) {
+      sendEmptyResponse(res);
+    }
+  } else {
+    const username = id;
+    try {
+      const user = await User.findOne({ username });
+      if (!user) sendResponse(res, 400, null, { userNotFound });
+      sendResponse(res, 200);
+    } catch (e) {
+      sendEmptyResponse(res);
+    }
   }
-  if (!req.body.currentPassword) _errors.currentPassword = currentPasswordEmpty;
-  if (!req.body.newPassword) _errors.newPassword = newPasswordEmpty;
-  if (!req.body.newPassword2) _errors.newPassword2 = newPassword2Empty;
-  const { currentPassword, newPassword, newPassword2 } = req.body;
-  if (!isEm) console.log(_errors);
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user)
-      return res.status(401).json({
-        errors: {
-          user: userNotFound,
-        },
-      });
-    if (!validator.equals(newPassword, newPassword2))
-      _errors.newPassword2 = password2NotMatch;
-    bcrypt.compare(currentPassword, user.password).then((isMatch) => {
-      if (!isMatch) {
-        _errors.currentPassword = currentPasswordIncorrect;
-        return res.status(400).json({ ..._errors });
+});
+router.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+  if (id === undefined || password === undefined)
+    return res.status(400).json({ m: 'enter data' });
+  const { errors, isValid } = checkEmpty(req.body);
+  if (!isValid) return res.status(400).json(errors);
+  let user = null;
+  const checkPassword = (enteredPassword, user) => {
+    bcrypt.compare(enteredPassword, user.password).then((isMatch) => {
+      if (isMatch) {
+        const payload = {
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        };
+        // Sign token
+        jwt.sign(
+          payload,
+          process.env.JWT_SECRETORKEY,
+          {
+            expiresIn: 15778476, // 6 months in seconds
+          },
+          async (err, token) => {
+            return res.status(200).json({
+              token: 'Bearer ' + token,
+            });
+          }
+        );
       } else {
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newPassword, salt, async (err, hash) => {
-            if (err) throw err;
-            user.password = hash;
-            try {
-              await user.save();
-              res.status(200).json({});
-            } catch (e) {
-              res.status(400).json({});
-            }
-          });
+        return res.status(400).json({
+          password: passwordIncorrect,
         });
       }
     });
-
-    // const isMatch = await bcrypt.compare(currentPassword, user.password);
-    // if (isMatch) return res.status(200).json({ m: 'true' });
-    // else return res.status(400).json({ m: 'false' });
-  } catch (e) {
-    res.status(400).json({ e });
+  };
+  if (validator.isEmail(id)) {
+    const email = id;
+    try {
+      user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({
+          id: idNotFound,
+        });
+      }
+      checkPassword(password, user);
+    } catch (e) {
+      return res.status(400);
+    }
+  } else if (validator.isMobilePhone(id)) {
+    const phoneNumber = id;
+    try {
+      user = await User.findOne({ phoneNumber });
+      if (!user) {
+        return res.status(404).json({
+          id: idNotFound,
+        });
+      }
+      checkPassword(password, user);
+    } catch (e) {
+      return res.status(400);
+    }
+  } else {
+    const username = id;
+    try {
+      user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({
+          id: idNotFound,
+        });
+      }
+      checkPassword(password, user);
+    } catch (e) {
+      return res.status(400).json({});
+    }
   }
 });
+
+const sendNoDataResponse = (res) => {
+  return res.status(400).json(enterData);
+};
+const sendResponse = (res, status, data = {}, errors = {}) => {
+  if (status === 200) {
+    return res.status(200).json(data);
+  } else if (status === 400) {
+    console.log('send response');
+    return res.status(400).json(errors);
+  }
+};
+const sendEmptyResponse = (res, status, e) => {
+  if (status === 200) {
+    return res.status(200).json({});
+  } else if (status === 400) {
+    console.log('send empty response');
+    return res.status(400).json({ e });
+  }
+};
 
 module.exports = router;
