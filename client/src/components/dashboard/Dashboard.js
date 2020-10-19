@@ -1,5 +1,10 @@
 import React, { useEffect, Fragment } from 'react';
-import { BrowserRouter as Router, Switch, withRouter } from 'react-router-dom';
+import {
+  Route,
+  BrowserRouter as Router,
+  Switch,
+  withRouter,
+} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PrivateRoute from './../private-route/PrivateRoute';
 import { connect } from 'react-redux';
@@ -22,21 +27,20 @@ function Dashboard({ match, auth, history }) {
   return (
     <Provider template={AlertTemplate} {...options}>
       <Alerts />
-      <Header user={auth.user} url={match.url} />
       <div className="az-content az-content-dashboard">
         <div className="container">
           <div className="az-content-body">
-            <Switch>
-              <PrivateRoute path="/admin" component={Admin} />
-              <PrivateRoute path="/" component={Users} />
-              <PrivateRoute path="/*" component={NotFound} />
-            </Switch>
+            <Switch></Switch>
           </div>
         </div>
       </div>
     </Provider>
   );
 }
+// <Header user={auth.user} url={match.url} />
+// <PrivateRoute path="/admin" component={Admin} />
+// <PrivateRoute path="/" component={Users} />
+// <PrivateRoute path="/*" component={NotFound} />
 
 function Designer() {
   return <div>Designer Route</div>;

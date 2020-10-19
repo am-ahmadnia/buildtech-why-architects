@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/setAuthToken';
 
@@ -42,12 +47,13 @@ function App() {
       <Router>
         <Switch>
           <Route path="/login" component={Login} />
-          <PrivateRoute path="/" component={Dashboard} />
+          <Route path="/" component={Test} />
         </Switch>
       </Router>
     </Provider>
   );
 }
+// <PrivateRoute path="/" component={Dashboard} />
 
 function Test() {
   return <h1>sicko test</h1>;
